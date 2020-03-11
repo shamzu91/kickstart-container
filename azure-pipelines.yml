@@ -1,24 +1,24 @@
-trigger:
-- master
-
-strategy:
-  matrix:
-    linux:
-      imageName: "ubuntu-16.04"
-    mac:
-      imageName: "ubuntu-18.02"
-  maxParallel: 3
+resources:
+  containers:
+  - container: my_container
+    image: ubuntu:16.04
+  - container: nginx
+    image: nginx
+  - container: redis
+    image: redis
 
 pool:
-  vmImage: $(imageName)
+  vmImage: 'ubuntu-16.04'
 
-variables:
-  imageName: 'pipelines-javascript-docker'
+container: my_container
+
+services:
+  nginx: nginx
+  redis: redis
 
 steps:
-- task: Docker@2
-  displayName: Build an image
-  inputs:
-    repository: $(imageName)
-    command: build
-    Dockerfile: app/Dockerfile
+- script: |
+    apt install -y curl
+    curl nginx
+    apt install redis-tools
+    redis-cli -h redis ping
